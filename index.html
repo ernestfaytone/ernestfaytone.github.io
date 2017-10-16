@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Displaying text directions with <code>setPanel()</code></title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+</head>
+<body>
+    <div id="left-panel">
+       <input id="pac-input" class="controls form-control" type="text" placeholder="Search Box">
+        <p>
+            <h3>Restaurant count: <span id="result_count" class="label label-default">0</span></h3>
+        </p>
+        <ul id="places"></ul>
+        <button id="more" class="btn btn-default">More results</button>
+    </div>
+    <div id="right-panel"></div>
+    <div id="map"></div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="maps.js"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDd7aBq0a2pSdAWWvVYIJMxjdS0fcZev8Y&libraries=places&callback=initMap">
+    </script>
+</body>
+
+</html>

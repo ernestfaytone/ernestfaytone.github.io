@@ -1,29 +1,52 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Restaurants</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
+
 <body>
-    <div id="left-panel">
-       <input id="pac-input" class="controls form-control" type="text" placeholder="Search Box">
-        <p>
-            <h3>Restaurant count: <span id="result_count" class="label label-default">0</span></h3>
-        </p>
-        <ul id="places"></ul>
-        <button id="more" class="btn btn-default">More results</button>
+    <div style="display:none">
+        <div id="resultDetails">
+            <label id="resultName"></label>
+            <p id="resultAddress"></p>
+            <span id="rateYo"></span>
+        </div>
     </div>
-    <div id="right-panel"></div>
+    <div id="results" class="float-left col-md-3  float-div background-white">
+        <div>
+            <input id="pac-input" class="controls form-control" type="text" placeholder="Search Box">
+            <br />
+            <!--
+            <p>
+                <h3>Restaurant count: <span id="result_count" class="label label-default">0</span></h3>
+            </p>
+-->
+            <p id="loadingResults" class="text-center"><span><i class="fa fa-spinner fa-spin" style="font-size:24px"></i></span><label>Loading Results...</label></p>
+            <ul id="places" class="list-group"></ul>
+        </div>
+        <button id="more" class="btn btn-primary" disabled>More results</button>
+    </div>
     <div id="map"></div>
+    <div id="right-panel" class="float-right float-div background-white">
+        <button class="btn btn-default text-center" id="hideRightPanel">Hide</button>
+    </div>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="maps.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.js"></script>
+    <script src="js/map_style.js"></script>
+    <script src="js/app.js"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDd7aBq0a2pSdAWWvVYIJMxjdS0fcZev8Y&libraries=places&callback=initMap">
+
+
     </script>
 </body>
-
 </html>

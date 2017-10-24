@@ -1,0 +1,163 @@
+  /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+  
+  #map {
+      height: 100%;
+  }
+  /* Optional: Makes the sample page fill the window. */
+  
+  html,
+  body {
+      width: 100%;
+      height: 100%;
+  }
+  
+  #right-panel select,
+  #right-panel input {
+      font-size: 15px;
+  }
+  
+  #right-panel select {
+      width: 100%;
+  }
+  
+  #right-panel i {
+      font-size: 12px;
+  }
+  
+  #right-panel {
+      display: none;
+      height: 100%;
+      float: right;
+      width: 390px;
+      overflow: auto;
+      font-family: 'Roboto', 'sans-serif';
+      line-height: 30px;
+      padding-left: 10px;
+      top: 0px;
+  }
+  
+  #map {
+      width: 100%;
+      height: 100%;
+      position: relative;
+  }
+  
+  #floating-panel {
+      background: #fff;
+      padding: 5px;
+      font-size: 14px;
+      font-family: Arial;
+      border: 1px solid #ccc;
+      box-shadow: 0 2px 2px rgba(33, 33, 33, 0.4);
+      display: none;
+  }
+  
+  .clearboth {
+      clear: both;
+  }
+  
+  #pac-input {
+      background-color: #fff;
+      font-family: Roboto;
+      font-size: 15px;
+      font-weight: 300;
+      margin-top: 12px;
+      padding: 0 11px 0 13px;
+      text-overflow: ellipsis;
+      width: 100%;
+  }
+  
+  #pac-input:focus {
+      border-color: #4d90fe;
+  }
+  
+  #title {
+      color: #fff;
+      background-color: #4d90fe;
+      font-size: 25px;
+      font-weight: 500;
+      padding: 6px 12px;
+  }
+  
+  #target {
+      width: 345px;
+  }
+  
+  #results {
+      height: inherit;
+      overflow-y: auto;
+      padding: 0 !important;
+  }
+  
+  .background-white {
+      background: #fff;
+  }
+  
+  .float-div {
+      position: absolute !important;
+      z-index: 999 !important;
+  }
+  
+  .float-right {
+      right: 0px;
+  }
+  
+  h2 {
+      font-size: 22px;
+      margin: 0 0 5px 0;
+  }
+  
+  ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+  }
+  
+  li {
+      text-overflow: ellipsis;
+  }
+  
+  li:hover {
+      background: rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+  }
+  
+  #more {
+      width: 100%;
+      margin: 5px 0 0 0;
+  }
+  
+  #resultDetails {
+      overflow: hidden;
+  }
+  
+   ::-webkit-scrollbar {
+      width: 8px;
+      /* 1px wider than Lion. */
+      /* This is more usable for users trying to click it. */
+      background-color: rgba(0, 0, 0, 0);
+      -webkit-border-radius: 100px;
+  }
+  /* hover effect for both scrollbar area, and scrollbar 'thumb' */
+  
+   ::-webkit-scrollbar:hover {
+      background-color: rgba(0, 0, 0, 0.09);
+  }
+  /* The scrollbar 'thumb' ...that marque oval shape in a scrollbar */
+  
+   ::-webkit-scrollbar-thumb:vertical {
+      /* This is the EXACT color of Mac OS scrollbars. 
+     Yes, I pulled out digital color meter */
+      background: rgba(0, 0, 0, 0.5);
+      -webkit-border-radius: 100px;
+  }
+  
+   ::-webkit-scrollbar-thumb:vertical:active {
+      background: rgba(0, 0, 0, 0.61);
+      /* Some darker color when you click it */
+      -webkit-border-radius: 100px;
+  }
+  
+  background: linear-gradient(45deg, white, silver);
+  min-height: 100%;

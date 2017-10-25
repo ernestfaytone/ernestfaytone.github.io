@@ -24,11 +24,18 @@
         <div>
             <input id="pac-input" class="controls form-control" type="text" placeholder="Search Box">
             <br />
-            <!--
-            <p>
-                <h3>Restaurant count: <span id="result_count" class="label label-default">0</span></h3>
-            </p>
--->
+            <div id="restaurant_type" class="checkbox">
+                <label class="checkbox-inline"><input type="checkbox" value="Chinese">Chinese</label>
+                <label class="checkbox-inline"><input type="checkbox" value="Japanese">Japanese</label>
+                <label class="checkbox-inline"><input type="checkbox" value="Filipino">Filipino</label>
+                <label class="checkbox-inline"><input type="checkbox" value="Korean">Korean</label>
+                <label class="checkbox-inline"><input type="checkbox" value="Mexican">Mexican</label>
+                <label class="checkbox-inline"><input type="checkbox" value="Spanish">Spanish</label>
+                <label class="checkbox-inline"><input type="checkbox" value="Vietnamese">Vietnamese</label>
+                <label class="checkbox-inline"><input type="checkbox" value="Italian">Italian</label>
+                <label class="checkbox-inline"><input type="checkbox" value="French">French</label>
+                <label class="checkbox-inline"><input type="checkbox" value="Grill">Grill</label>
+            </div>
             <p id="loadingResults" class="text-center"><span><i class="fa fa-spinner fa-spin" style="font-size:24px"></i></span><label>Loading Results...</label></p>
             <ul id="places" class="list-group"></ul>
         </div>
@@ -49,4 +56,5 @@
 
     </script>
 </body>
+
 </html>

@@ -132,6 +132,12 @@
       overflow: hidden;
   }
   
+  #restaurant_type {
+      text-align: center !important;
+      padding: 20px;
+      margin: 0px;
+  }
+  
    ::-webkit-scrollbar {
       width: 8px;
       /* 1px wider than Lion. */

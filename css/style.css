@@ -62,10 +62,9 @@
       font-family: Roboto;
       font-size: 15px;
       font-weight: 300;
-      margin-top: 12px;
-      padding: 0 11px 0 13px;
+      margin:15px;
       text-overflow: ellipsis;
-      width: 100%;
+      width: 95%;
   }
   
   #pac-input:focus {
@@ -138,8 +137,8 @@
   }
   
   #more {
-      width: 100%;
-      margin: 5px 0 0 0;
+      width: 95    %;
+      margin:15px;
   }
   
   #resultDetails {

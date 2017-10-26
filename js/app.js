@@ -274,7 +274,7 @@
 
             results.forEach(function (result) {
                 markers.forEach(function (marker) {
-                    if (result.place_id == marker.place.place_id) {
+                    if (result.place_id != marker.place.place_id) {
                         var noDuplicate = $("#" + marker.place.place_id).length == 0;
 
                         if (noDuplicate) {

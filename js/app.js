@@ -13,6 +13,8 @@
         var fourSquareResults = [];
         var apiKey = "AIzaSyDd7aBq0a2pSdAWWvVYIJMxjdS0fcZev8Y";
         var currRadius = 5000;
+        var operation = 0;
+        var restTypes = [];
 
         function initMap() {
 
@@ -36,7 +38,6 @@
         function clearAll() {
             clearAllDisplayResult();
             clearAllInfoWindow();
-            clearAllMarkers();
             directionsDisplay.setMap(null);
             directionsDisplay = null;
             directionsDisplay = new google.maps.DirectionsRenderer;
@@ -57,19 +58,68 @@
         }
 
         function populateMap(results, status, pagination) {
+            var existingPlaces = [];
+            var removePlaces = [];
+            var found = false;
+
             if (status === google.maps.places.PlacesServiceStatus.OK) {
+                for (var i = 0; i < markers.length; i++) {
+                    found = false;
+                    for (var z = 0; z < results.length; z++) {
+                        if (results[z].place_id == markers[i].place.place_id) {
+                            found = true;
+                            existingPlaces.push(z);
+                        }
+                    }
+                    if (!found) {
+                        markers[i].setMap(null);
+                        removePlaces.push(i);
+                    }
+
+                };
+
+                removePlaces.forEach(function (index) {
+                    delete markers[removePlaces[index]];
+                });
+                for (var i = 0; i < markers.length; i++) {
+                    if (!markers[i]) {
+                        markers.splice(i--, 1);
+                    }
+                }
+
+                for (var i = 0; i < existingPlaces.length; i++) {
+                    delete results[existingPlaces[i]];
+                }
                 for (var i = 0; i < results.length; i++) {
-                    createMarker(results[i]);
+                    if (!results[i]) {
+                        results.splice(i--, 1);
+                    }
                 }
 
 
-                displayResult();
+                results.forEach(function (result) {
+                    createMarker(result);
+                });
+                //                
+                //                 var found = markers.filter(function (obj) {
+                //                        if(obj.place.place_id == results[i].place_id;
+                //                    });
+                //                    if (!found.length) {
+                //                        createMarker(results[i]);
+                //                    }
+                //                    else{
+                //                        
+                //                    }
+
+
+                displayResult(results);
                 handlePagination(results, status, pagination);
                 resultsCount += results.length;
                 $("#result_count").text(resultsCount);
 
                 $('#restaurant_type input[type="checkbox"]').change(function () {
-                    var restTypes = [];
+                    var count = $('#restaurant_type input[type="checkbox"]:checked').length;
+                    restTypes = [];
                     $('#restaurant_type input[type="checkbox"]:checked').each(function () {
                         restTypes.push($(this).val());
                     });
@@ -77,7 +127,7 @@
                         filterRestaurants(restTypes);
                     } else {
                         clearAll();
-                        initMap();
+                        filterRestaurants(restTypes);
                     }
 
                 });
@@ -216,80 +266,83 @@
             }
         }
 
-        function displayResult() {
+        function displayResult(results) {
             if (markers.length) {
                 $("#loadingResults").hide();
                 $("#more").removeProp("disabled");
             }
 
-            markers.forEach(function (marker) {
-                var noDuplicate = $("#" + marker.place.place_id).length == 0;
+            results.forEach(function (result) {
+                markers.forEach(function (marker) {
+                    if (result.place_id == marker.place.place_id) {
+                        var noDuplicate = $("#" + marker.place.place_id).length == 0;
 
-                if (noDuplicate) {
-                    var photoUrl = (typeof marker.place.photos !== 'undefined') ? marker.place.photos[0].getUrl({
-                        'maxHeight': 92
-                    }) : '';
-                    var vicinity = marker.place.vicinity ? marker.place.vicinity : marker.place.formatted_address;
-                    var placeName = marker.place.name;
-                    var liElement = $('<li id="' + marker.place.place_id + '" title="Click to get directions">');
-                    liElement.attr('class', 'list-group-item');
-                    var div = $('<div class="col-md-8">');
+                        if (noDuplicate) {
+                            var photoUrl = (typeof marker.place.photos !== 'undefined') ? marker.place.photos[0].getUrl({
+                                'maxHeight': 92
+                            }) : '';
+                            var vicinity = marker.place.vicinity ? marker.place.vicinity : marker.place.formatted_address;
+                            var placeName = marker.place.name;
+                            var liElement = $('<li id="' + marker.place.place_id + '" title="Click to get directions">');
+                            liElement.attr('class', 'list-group-item');
+                            var div = $('<div class="col-md-8">');
 
-                    div.attr('class', 'content-details');
-                    div.append('<div class="content-image pull-right" style="height:92px; width:92px; background: url(' + photoUrl + '); background-size: cover; background-position: center; background-repeat: no-repeat;"></div>');
-                    div.append('<span><label>' + placeName + '</label></span>');
-                    div.append('<br />');
+                            div.attr('class', 'content-details');
+                            div.append('<div class="content-image pull-right" style="height:92px; width:92px; background: url(' + photoUrl + '); background-size: cover; background-position: center; background-repeat: no-repeat;"></div>');
+                            div.append('<span><label>' + placeName + '</label></span>');
+                            div.append('<br />');
 
-                    var subdiv = $('<div>');
-                    subdiv.append('<p">' + vicinity + '</p>');
-                    setupInfoForMarker(marker.place);
-                    $('#rateYo').attr('title', marker.place.rating ? 'Rated: ' + marker.place.rating + ' out of 5' : 0 + ' out of 5');
-                    subdiv.append($('#rateYo').clone()[0]);
+                            var subdiv = $('<div>');
+                            subdiv.append('<p">' + vicinity + '</p>');
+                            setupInfoForMarker(marker.place);
+                            $('#rateYo').attr('title', marker.place.rating ? 'Rated: ' + marker.place.rating + ' out of 5' : 0 + ' out of 5');
+                            subdiv.append($('#rateYo').clone()[0]);
 
-                    if (marker.place.opening_hours == null) {
-                        subdiv.append('<span class="label label-default">Unverified</span>');
-                    } else if (marker.place.opening_hours.open_now) {
-                        subdiv.append('<span class="label label-success">Open Now</span>');
-                    } else {
-                        subdiv.append('<span class="label label-default">Closed Now</span>');
+                            if (marker.place.opening_hours == null) {
+                                subdiv.append('<span class="label label-default">Unverified</span>');
+                            } else if (marker.place.opening_hours.open_now) {
+                                subdiv.append('<span class="label label-success">Open Now</span>');
+                            } else {
+                                subdiv.append('<span class="label label-default">Closed Now</span>');
+                            }
+
+                            div.append(subdiv);
+
+                            infoWindow = new google.maps.InfoWindow();
+                            infoWindows.push(infoWindow);
+                            //
+                            //                $.ajax({
+                            //                    url: "https://maps.googleapis.com/maps/api/place/details/json?placeid=" + results[i].place_id + "&key=" + apiKey,
+                            //                    type: "GET",
+                            //                    dataType: 'jsonp',
+                            //                    cache: true,
+                            //                    success: function (response) {
+                            //                        console.log(response);
+                            //                    }
+                            //                });
+                            //                checkPlaceInFourSquare(marker.place);
+
+                            liElement.mouseover(function () {
+                                setupInfoForMarker(marker.place);
+                                infoWindow.setContent($("#resultDetails").clone()[0]);
+                                infoWindow.open(map, marker);
+
+                            });
+
+                            liElement.click(function () {
+                                clearAllInfoWindow();
+                                getRouteToDestination(marker.place, infoWindow, marker);
+                            });
+                            liElement.mouseleave(function () {
+                                infoWindow.close();
+                            });
+                            liElement.append(div);
+
+                            $('#places').append(liElement);
+                        }
                     }
-
-                    div.append(subdiv);
-
-                    infoWindow = new google.maps.InfoWindow();
-                    infoWindows.push(infoWindow);
-                    //
-                    //                $.ajax({
-                    //                    url: "https://maps.googleapis.com/maps/api/place/details/json?placeid=" + results[i].place_id + "&key=" + apiKey,
-                    //                    type: "GET",
-                    //                    dataType: 'jsonp',
-                    //                    cache: true,
-                    //                    success: function (response) {
-                    //                        console.log(response);
-                    //                    }
-                    //                });
-                    //                checkPlaceInFourSquare(marker.place);
-
-                    liElement.mouseover(function () {
-                        setupInfoForMarker(marker.place);
-                        infoWindow.setContent($("#resultDetails").clone()[0]);
-                        infoWindow.open(map, marker);
-
-                    });
-
-                    liElement.click(function () {
-                        clearAllInfoWindow();
-                        getRouteToDestination(marker.place, infoWindow, marker);
-                    });
-                    liElement.mouseleave(function () {
-                        infoWindow.close();
-                    });
-                    liElement.append(div);
-
-                    $('#places').append(liElement);
-                }
+                });
             });
-
         }
 
         function clearAllInfoWindow() {
@@ -329,7 +382,7 @@
             directionsDisplay.setPanel(document.getElementById('right-panel'));
 
             placeService = new google.maps.places.PlacesService(map);
-            placeService.nearbySearch({
+            placeService.textSearch({
                 location: myLatLng,
                 radius: currRadius,
                 type: ['restaurant']
@@ -347,9 +400,7 @@
             });
 
             $("#hideRightPanel").on('click', function () {
-                $("#right-panel").animate({
-                    width: 'toggle'
-                }, "fast");
+                $("#right-panel").hide();
             });
         }
 

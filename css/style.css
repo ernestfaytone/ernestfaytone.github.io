@@ -118,6 +118,20 @@
       text-overflow: ellipsis;
   }
   
+  #restaurant_type ul li {
+      min-height: 20px;
+      padding-left: 20px;
+      margin-bottom: 0;
+      font-weight: 400;
+      cursor: pointer;
+      float: left;
+  }
+  
+  #restaurant_type ul li label {
+      width: 100px;
+      text-align: left;
+  }
+  
   li:hover {
       background: rgba(0, 0, 0, 0.1);
       cursor: pointer;
@@ -134,7 +148,6 @@
   
   #restaurant_type {
       text-align: center !important;
-      padding: 20px;
       margin: 0px;
   }
   

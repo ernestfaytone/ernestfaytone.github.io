@@ -326,16 +326,16 @@
             });
             homeMarker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png')
 
-            var cityCircle = new google.maps.Circle({
-                strokeColor: '#98FB98',
-                strokeOpacity: 0.8,
-                strokeWeight: 2,
-                fillColor: '#98FB98',
-                fillOpacity: 0.35,
-                map: map,
-                center: myLatLng,
-                radius: currRadius
-            });
+//            var cityCircle = new google.maps.Circle({
+//                strokeColor: '#98FB98',
+//                strokeOpacity: 0.8,
+//                strokeWeight: 2,
+//                fillColor: '#98FB98',
+//                fillOpacity: 0.35,
+//                map: map,
+//                center: myLatLng,
+//                radius: currRadius
+//            });
 
             setSearchMap();
 

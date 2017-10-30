@@ -26,15 +26,15 @@
   }
   
   #right-panel {
-      display: none;
-      height: 100%;
-      float: right;
-      width: 390px;
-      overflow: auto;
-      font-family: 'Roboto', 'sans-serif';
-      line-height: 30px;
-      padding-left: 10px;
-      top: 0px;
+    display: none;
+    height: 100%;
+    float: right;
+    /* width: 390px; */
+    overflow: auto;
+    font-family: 'Roboto', 'sans-serif';
+    line-height: 30px;
+    padding-left: 10px;
+    top: 0px;
   }
   
   #map {
@@ -62,7 +62,7 @@
       font-family: Roboto;
       font-size: 15px;
       font-weight: 300;
-      margin:15px;    
+      margin: 15px;
       text-overflow: ellipsis;
       width: 95%;
   }
@@ -138,7 +138,7 @@
   
   #more {
       width: 95%;
-      margin:15px;
+      margin: 15px;
   }
   
   #resultDetails {
@@ -175,6 +175,11 @@
       background: rgba(0, 0, 0, 0.61);
       /* Some darker color when you click it */
       -webkit-border-radius: 100px;
+  }
+  
+  #radiusModifier {
+      margin: 10px;
+      width: 40%;
   }
   
   background: linear-gradient(45deg, white, silver);

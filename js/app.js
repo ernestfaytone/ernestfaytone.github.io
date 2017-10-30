@@ -79,19 +79,18 @@
                 $('#restaurant_type input[type="checkbox"]').change(function () {
                     if (!$(this).is(':checked')) {
                         clearAllMarkers(restaurantTypeResults[$(this).val()]);
-                    }
-
-                    var count = $('#restaurant_type input[type="checkbox"]:checked').length;
-                    restTypes = [];
-                    $('#restaurant_type input[type="checkbox"]:checked').each(function () {
-                        restTypes.push($(this).val());
-                    });
-                    if (restTypes.length) {
-                        filterRestaurants(restTypes);
                     } else {
-                        filterRestaurants(restTypes);
+                        var count = $('#restaurant_type input[type="checkbox"]:checked').length;
+                        restTypes = [];
+                        $('#restaurant_type input[type="checkbox"]:checked').each(function () {
+                            restTypes.push($(this).val());
+                        });
+                        if (restTypes.length) {
+                            filterRestaurants(restTypes);
+                        } else {
+                            filterRestaurants(restTypes);
+                        }
                     }
-
                 });
             }
 
@@ -327,10 +326,23 @@
             });
             homeMarker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png')
 
+            var cityCircle = new google.maps.Circle({
+                strokeColor: '#98FB98',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: '#98FB98',
+                fillOpacity: 0.35,
+                map: map,
+                center: myLatLng,
+                radius: currRadius
+            });
+
             setSearchMap();
 
             directionsDisplay.setMap(map);
             directionsDisplay.setPanel(document.getElementById('right-panel'));
+
+            map.controls[google.maps.ControlPosition.BOTTOM_RIGHT].push(document.getElementById('radiusModifier'));
 
             placeService = new google.maps.places.PlacesService(map);
             placeService.nearbySearch({
@@ -339,16 +351,19 @@
                 type: ['restaurant']
             }, populateMap);
 
-            //            var cityCircle = new google.maps.Circle({
-            //                strokeColor: '#98FB98',
-            //                strokeOpacity: 0.8,
-            //                strokeWeight: 2,
-            //                fillColor: '#98FB98',
-            //                fillOpacity: 0.35,
-            //                map: map,
-            //                center: myLatLng,
-            //                radius: currRadius
-            //            });
+            $("#radiusModifier").on("input", function () {
+                cityCircle.setRadius(100 * this.value);
+            });
+            $("#radiusModifier").change(function () {
+                clearAll();
+                clearAllMarkers(markers);
+                placeService = new google.maps.places.PlacesService(map);
+                placeService.nearbySearch({
+                    location: myLatLng,
+                    radius: $(this).val() * 100,
+                    type: ['restaurant']
+                }, populateMap);
+            });
 
             $("#hideRightPanel").on('click', function () {
                 $("#right-panel").hide();
@@ -357,8 +372,9 @@
 
         function filterRestaurants(restaurantTypes) {
             currentRestaurantFilter = "";
-            placeService = new google.maps.places.PlacesService(map);
+
             restaurantTypes.forEach(function (restaurantType, index) {
+                placeService = new google.maps.places.PlacesService(map);
                 currentRestaurantFilter = restaurantType;
                 if (!restaurantTypeResults.hasOwnProperty(restaurantType)) {
                     $("#restaurant_type ul li input[type='checkbox']").prop({
@@ -371,7 +387,7 @@
                         query: restaurantType
                     }, storeRestaurantTypeMarkers);
                 } else {
-                    if (!restaurantTypeResults[restaurantType][0].visible) {
+                    if (restaurantTypeResults[restaurantType][0].map == null) {
                         restaurantTypeResults[restaurantType].forEach(function (marker) {
                             marker.setMap(map);
                         });
@@ -381,13 +397,14 @@
         }
 
         function storeRestaurantTypeMarkers(results, status) {
+            if (status == "OK") {
+                restaurantTypeResults[currentRestaurantFilter] = [];
+                results.forEach(function (result) {
+                    createMarker(result, restaurantTypeResults[currentRestaurantFilter]);
+                });
 
-            restaurantTypeResults[currentRestaurantFilter] = [];
-            results.forEach(function (result) {
-                createMarker(result, restaurantTypeResults[currentRestaurantFilter]);
-            });
-
-            $("#restaurant_type ul li input[type='checkbox']").prop({
-                disabled: false
-            });
+                $("#restaurant_type ul li input[type='checkbox']").prop({
+                    disabled: false
+                });
+            }
         }

@@ -14,7 +14,6 @@
         var apiKey = "AIzaSyDd7aBq0a2pSdAWWvVYIJMxjdS0fcZev8Y";
         var currRadius = 5000;
         var operation = 0;
-        var restTypes = [];
         var restaurantTypeResults = [];
         var currentRestaurantFilter = "";
         var filterMarkerIcons = [];
@@ -81,14 +80,10 @@
                         clearAllMarkers(restaurantTypeResults[$(this).val()]);
                     } else {
                         var count = $('#restaurant_type input[type="checkbox"]:checked').length;
-                        restTypes = [];
-                        $('#restaurant_type input[type="checkbox"]:checked').each(function () {
-                            restTypes.push($(this).val());
-                        });
-                        if (restTypes.length) {
-                            filterRestaurants(restTypes);
+                        if (count) {
+                            filterRestaurants($(this).val());
                         } else {
-                            filterRestaurants(restTypes);
+                            clearAllMarkers(restaurantTypeResults[currentRestaurantFilter]);
                         }
                     }
                 });
@@ -337,6 +332,27 @@
                 radius: currRadius
             });
 
+
+            var drawingManager = new google.maps.drawing.DrawingManager({
+                drawingMode: google.maps.drawing.OverlayType.MARKER,
+                drawingControl: true,
+                drawingControlOptions: {
+                    position: google.maps.ControlPosition.TOP_CENTER,
+                    drawingModes: ['marker', 'circle', 'polygon', 'polyline', 'rectangle']
+                },
+                markerOptions: {
+                    icon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'
+                },
+                circleOptions: {
+                    fillColor: '#ffff00',
+                    fillOpacity: 1,
+                    strokeWeight: 5,
+                    clickable: false,
+                    editable: true,
+                    zIndex: 1
+                }
+            });
+            drawingManager.setMap(map);
             setSearchMap();
 
             directionsDisplay.setMap(map);
@@ -358,7 +374,6 @@
             $("#radiusModifier").change(function () {
                 clearAll();
                 clearAllMarkers(markers);
-                placeService = new google.maps.places.PlacesService(map);
                 placeService.nearbySearch({
                     location: myLatLng,
                     radius: $(this).val() * 100,
@@ -371,30 +386,28 @@
             });
         }
 
-        function filterRestaurants(restaurantTypes) {
+        function filterRestaurants(restaurantType) {
             currentRestaurantFilter = "";
+            currentRestaurantFilter = restaurantType;
+            placeService = new google.maps.places.PlacesService(map);
 
-            restaurantTypes.forEach(function (restaurantType, index) {
-                placeService = new google.maps.places.PlacesService(map);
-                currentRestaurantFilter = restaurantType;
-                if (!restaurantTypeResults.hasOwnProperty(restaurantType)) {
-                    $("#restaurant_type ul li input[type='checkbox']").prop({
-                        disabled: true
+            if (!restaurantTypeResults.hasOwnProperty(restaurantType)) {
+                $("#restaurant_type ul li input[type='checkbox']").prop({
+                    disabled: true
+                });
+                placeService.textSearch({
+                    location: myLatLng,
+                    radius: currRadius,
+                    type: ['restaurant'],
+                    query: restaurantType
+                }, storeRestaurantTypeMarkers);
+            } else {
+                if (restaurantTypeResults[restaurantType][0].map == null) {
+                    restaurantTypeResults[restaurantType].forEach(function (marker) {
+                        marker.setMap(map);
                     });
-                    placeService.textSearch({
-                        location: myLatLng,
-                        radius: currRadius,
-                        type: ['restaurant'],
-                        query: restaurantType
-                    }, storeRestaurantTypeMarkers);
-                } else {
-                    if (restaurantTypeResults[restaurantType][0].map == null) {
-                        restaurantTypeResults[restaurantType].forEach(function (marker) {
-                            marker.setMap(map);
-                        });
-                    }
                 }
-            });
+            }
         }
 
         function storeRestaurantTypeMarkers(results, status) {

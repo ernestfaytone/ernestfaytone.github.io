@@ -228,63 +228,61 @@
                 $("#more").removeProp("disabled");
             }
 
-            results.forEach(function (result) {
-                markers.forEach(function (marker) {
-                    var noDuplicate = $("#" + marker.place.place_id).length == 0;
+            markers.forEach(function (marker) {
+                var noDuplicate = $("#" + marker.place.place_id).length == 0;
 
-                    if (noDuplicate) {
-                        var photoUrl = (typeof marker.place.photos !== 'undefined') ? marker.place.photos[0].getUrl({
-                            'maxHeight': 92
-                        }) : '';
-                        var vicinity = marker.place.vicinity ? marker.place.vicinity : marker.place.formatted_address;
-                        var placeName = marker.place.name;
-                        var liElement = $('<li id="' + marker.place.place_id + '" title="Click to get directions">');
-                        liElement.attr('class', 'list-group-item');
-                        var div = $('<div class="col-md-8">');
+                if (noDuplicate) {
+                    var photoUrl = (typeof marker.place.photos !== 'undefined') ? marker.place.photos[0].getUrl({
+                        'maxHeight': 92
+                    }) : '';
+                    var vicinity = marker.place.vicinity ? marker.place.vicinity : marker.place.formatted_address;
+                    var placeName = marker.place.name;
+                    var liElement = $('<li id="' + marker.place.place_id + '" title="Click to get directions">');
+                    liElement.attr('class', 'list-group-item');
+                    var div = $('<div class="col-md-8">');
 
-                        div.attr('class', 'content-details');
-                        div.append('<div class="content-image pull-right" style="height:92px; width:92px; background: url(' + photoUrl + '); background-size: cover; background-position: center; background-repeat: no-repeat;"></div>');
-                        div.append('<span><label>' + placeName + '</label></span>');
-                        div.append('<br />');
+                    div.attr('class', 'content-details');
+                    div.append('<div class="content-image pull-right" style="height:92px; width:92px; background: url(' + photoUrl + '); background-size: cover; background-position: center; background-repeat: no-repeat;"></div>');
+                    div.append('<span><label>' + placeName + '</label></span>');
+                    div.append('<br />');
 
-                        var subdiv = $('<div>');
-                        subdiv.append('<p">' + vicinity + '</p>');
-                        setupInfoForMarker(marker.place);
-                        $('#rateYo').attr('title', marker.place.rating ? 'Rated: ' + marker.place.rating + ' out of 5' : 0 + ' out of 5');
-                        subdiv.append($('#rateYo').clone()[0]);
+                    var subdiv = $('<div>');
+                    subdiv.append('<p">' + vicinity + '</p>');
+                    setupInfoForMarker(marker.place);
+                    $('#rateYo').attr('title', marker.place.rating ? 'Rated: ' + marker.place.rating + ' out of 5' : 0 + ' out of 5');
+                    subdiv.append($('#rateYo').clone()[0]);
 
-                        if (marker.place.opening_hours == null) {
-                            subdiv.append('<span class="label label-default">Unverified</span>');
-                        } else if (marker.place.opening_hours.open_now) {
-                            subdiv.append('<span class="label label-success">Open Now</span>');
-                        } else {
-                            subdiv.append('<span class="label label-default">Closed Now</span>');
-                        }
-
-                        div.append(subdiv);
-
-                        infoWindow = new google.maps.InfoWindow();
-                        infoWindows.push(infoWindow);
-
-                        liElement.mouseover(function () {
-                            setupInfoForMarker(marker.place);
-                            infoWindow.setContent($("#resultDetails").clone()[0]);
-                            infoWindow.open(map, marker);
-
-                        });
-
-                        liElement.click(function () {
-                            clearAllInfoWindow();
-                            getRouteToDestination(marker.place, infoWindow, marker);
-                        });
-                        liElement.mouseleave(function () {
-                            infoWindow.close();
-                        });
-                        liElement.append(div);
-
-                        $('#places').append(liElement);
+                    if (marker.place.opening_hours == null) {
+                        subdiv.append('<span class="label label-default">Unverified</span>');
+                    } else if (marker.place.opening_hours.open_now) {
+                        subdiv.append('<span class="label label-success">Open Now</span>');
+                    } else {
+                        subdiv.append('<span class="label label-default">Closed Now</span>');
                     }
-                });
+
+                    div.append(subdiv);
+
+                    infoWindow = new google.maps.InfoWindow();
+                    infoWindows.push(infoWindow);
+
+                    liElement.mouseover(function () {
+                        setupInfoForMarker(marker.place);
+                        infoWindow.setContent($("#resultDetails").clone()[0]);
+                        infoWindow.open(map, marker);
+
+                    });
+
+                    liElement.click(function () {
+                        clearAllInfoWindow();
+                        getRouteToDestination(marker.place, infoWindow, marker);
+                    });
+                    liElement.mouseleave(function () {
+                        infoWindow.close();
+                    });
+                    liElement.append(div);
+
+                    $('#places').append(liElement);
+                }
             });
         }
 

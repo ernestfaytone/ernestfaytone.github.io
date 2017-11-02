@@ -312,7 +312,7 @@
                 zoom: 15,
                 title: 'Current Location',
                 center: myLatLng,
-                style: mapStyle
+                styles: mapStyle
             });
             var homeMarker = new google.maps.Marker({
                 map: map,

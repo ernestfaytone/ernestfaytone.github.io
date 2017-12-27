@@ -14,9 +14,6 @@
         var apiKey = "AIzaSyDd7aBq0a2pSdAWWvVYIJMxjdS0fcZev8Y";
         var currRadius = 5000;
         var operation = 0;
-        var restaurantTypeResults = [];
-        var currentRestaurantFilter = "";
-        var filterMarkerIcons = [];
         var clickedFilter = "";
 
 
@@ -31,17 +28,6 @@
                     };
                     setUpMap(myLatLng)
                 });
-
-                filterMarkerIcons["Chinese"] = "../images/restaurant_chinese.png";
-                filterMarkerIcons["Japanese"] = "../images/japanese-food.png";
-                filterMarkerIcons["Filipino"] = "../images/restaurant_buffet.png";
-                filterMarkerIcons["Korean"] = "../images/restaurant_korean.png";
-                filterMarkerIcons["Mexican"] = "../images/restaurant_mexican.png";
-                filterMarkerIcons["Spanish"] = "../images/restaurant_mediterranean.png";
-                filterMarkerIcons["Vietnamese"] = "../images/restaurant_thai.png";
-                filterMarkerIcons["Italian"] = "../images/restaurant_italian.png";
-                filterMarkerIcons["French"] = "../images/gourmet_0star.png";
-                filterMarkerIcons["Grill"] = "../images/restaurant_steakhouse.png";
 
 
             } else {
@@ -74,19 +60,6 @@
                 handlePagination(results, status, pagination);
                 resultsCount += results.length;
                 $("#result_count").text(resultsCount);
-
-                $('#restaurant_type input[type="checkbox"]').change(function () {
-                    if (!$(this).is(':checked')) {
-                        clearAllMarkers(restaurantTypeResults[$(this).val()]);
-                    } else {
-                        var count = $('#restaurant_type input[type="checkbox"]:checked').length;
-                        if (count) {
-                            filterRestaurants($(this).val());
-                        } else {
-                            clearAllMarkers(restaurantTypeResults[currentRestaurantFilter]);
-                        }
-                    }
-                });
             }
 
         }
@@ -102,8 +75,9 @@
 
         function createMarker(place, markers) {
             var placeLoc = place.geometry.location;
-            var restaurantIcon = {
-                url: currentRestaurantFilter.length ? filterMarkerIcons[currentRestaurantFilter] : place.icon,
+
+            var storeIcon = {
+                url: place.icon,
                 scaledSize: new google.maps.Size(25, 25),
                 origin: new google.maps.Point(0, 0),
                 anchor: new google.maps.Point(0, 0)
@@ -111,12 +85,14 @@
             var marker = new google.maps.Marker({
                 map: map,
                 position: place.geometry.location,
-                icon: restaurantIcon
+                icon: storeIcon
             });
+
             var originLatLng = new google.maps.LatLng(myLatLng.lat, myLatLng.lng);
 
-            marker.place = place;
+            marker.place = place; 
             markers.push(marker);
+            
 
             infoWindow = new google.maps.InfoWindow();
             infoWindows.push(infoWindow);
@@ -191,7 +167,7 @@
             infoWindow.open(map, marker);
             var request = {
                 origin: myLatLng,
-                destination: place.geometry.location,
+                destination: place.geometry.location,       
                 travelMode: 'DRIVING'
             };
 
@@ -237,13 +213,21 @@
                     }) : '';
                     var vicinity = marker.place.vicinity ? marker.place.vicinity : marker.place.formatted_address;
                     var placeName = marker.place.name;
-                    var liElement = $('<li id="' + marker.place.place_id + '" title="Click to get directions">');
+                    var liElement = $('<li id="' + marker.place.place_id + '">');
                     liElement.attr('class', 'list-group-item');
                     var div = $('<div class="col-md-8">');
 
                     div.attr('class', 'content-details');
                     div.append('<div class="content-image pull-right" style="height:92px; width:92px; background: url(' + photoUrl + '); background-size: cover; background-position: center; background-repeat: no-repeat;"></div>');
-                    div.append('<span><label>' + placeName + '</label></span>');
+                    div.append('<span><label>' + placeName + '&nbsp;</label></span>');
+
+                    var btn = $('<button>');
+                    btn.attr('class', 'btn btn-xs btn-danger');
+                    btn.append('Directions <span class="glyphicon glyphicon-road"></span>');
+                    btn.click(function(){
+                        getRouteToDestination(marker.place, infoWindow, marker)
+                    });
+                    div.append(btn);
                     div.append('<br />');
 
                     var subdiv = $('<div>');
@@ -259,26 +243,18 @@
                     } else {
                         subdiv.append('<span class="label label-default">Closed Now</span>');
                     }
-
                     div.append(subdiv);
 
                     infoWindow = new google.maps.InfoWindow();
                     infoWindows.push(infoWindow);
 
-                    liElement.mouseover(function () {
+                    liElement.click(function () {
+                        clearAllInfoWindow();
                         setupInfoForMarker(marker.place);
                         infoWindow.setContent($("#resultDetails").clone()[0]);
                         infoWindow.open(map, marker);
-
                     });
 
-                    liElement.click(function () {
-                        clearAllInfoWindow();
-                        getRouteToDestination(marker.place, infoWindow, marker);
-                    });
-                    liElement.mouseleave(function () {
-                        infoWindow.close();
-                    });
                     liElement.append(div);
 
                     $('#places').append(liElement);
@@ -312,11 +288,13 @@
                 center: myLatLng,
                 styles: mapStyle
             });
+
             var homeMarker = new google.maps.Marker({
                 map: map,
                 position: myLatLng,
                 title: 'Current Location'
             });
+
             homeMarker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png')
 
             var cityCircle = new google.maps.Circle({
@@ -341,20 +319,19 @@
             placeService.nearbySearch({
                 location: myLatLng,
                 radius: 5000,
-                type: ['restaurant']
+                type: ['store']
             }, populateMap);
 
             $("#radiusModifier").on("input", function () {
-                currentRestaurantFilter = "";
                 cityCircle.setRadius(100 * this.value);
             });
             $("#radiusModifier").change(function () {
-                clearAll();
-                clearAllMarkers(markers);
+                // clearAll();
+                // clearAllMarkers(markers);
                 placeService.nearbySearch({
                     location: myLatLng,
                     radius: $(this).val() * 100,
-                    type: ['restaurant']
+                    type: ['store']
                 }, populateMap);
             });
 
@@ -363,39 +340,21 @@
             });
         }
 
-        function filterRestaurants(restaurantType) {
-            currentRestaurantFilter = "";
-            currentRestaurantFilter = restaurantType;
-            placeService = new google.maps.places.PlacesService(map);
 
-            if (!restaurantTypeResults.hasOwnProperty(restaurantType)) {
-                $("#restaurant_type ul li input[type='checkbox']").prop({
-                    disabled: true
-                });
-                placeService.textSearch({
-                    location: myLatLng,
-                    radius: currRadius,
-                    type: ['restaurant'],
-                    query: restaurantType
-                }, storeRestaurantTypeMarkers);
-            } else {
-                if (restaurantTypeResults[restaurantType][0].map == null) {
-                    restaurantTypeResults[restaurantType].forEach(function (marker) {
-                        marker.setMap(map);
-                    });
+        function getDistanceMatrix(place, marker) {
+            var service = new google.maps.DistanceMatrixService();
+            service.getDistanceMatrix({
+                origins: [myLatLng],
+                destinations: [place],
+                travelMode: google.maps.TravelMode.DRIVING,
+                unitSystem: google.maps.UnitSystem.METRIC,
+                avoidHighways: false,
+                avoidTolls: false
+            }, function (response, status) {
+                if (status != google.maps.DistanceMatrixStatus.OK) {
+                    console.error('Error was: ' + status);
+                } else {
+                    marker.distance = response.rows[0].elements[0].duration.text;
                 }
-            }
-        }
-
-        function storeRestaurantTypeMarkers(results, status) {
-            if (status == "OK") {
-                restaurantTypeResults[currentRestaurantFilter] = [];
-                results.forEach(function (result) {
-                    createMarker(result, restaurantTypeResults[currentRestaurantFilter]);
-                });
-
-                $("#restaurant_type ul li input[type='checkbox']").prop({
-                    disabled: false
-                });
-            }
+            });
         }
